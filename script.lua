@@ -21,18 +21,15 @@ ChunkCulling = false,
 DisableAnimations = false,
 ViewDistanceStuds = 500,
 
--- Các State bổ sung cho tính năng mới
 Smooth_ExcludeMesh = true,
 Smooth_ForceAll = false,
 Smooth_GreyScale = false,
 Smooth_NukeTextures = false,
 BlockVFX = false,
 
--- Tính năng mới (ESP & Frame Gen)
 ESPToggle = false,
 SmartSmoother = false,
 
--- FFlag Emulators State
 LimitLightUpdates = false,
 MobileProMode = false
 }
@@ -95,7 +92,6 @@ MainUIStroke.Color = Theme.Border
 MainUIStroke.Thickness = 1.5
 MainUIStroke.Parent = MainFrame
 
--- STREAMING_CHUNK:Building minimized pill...
 local MinimizedFrame = Instance.new("Frame")
 MinimizedFrame.Name = "MinimizedFrame"
 MinimizedFrame.Size = UDim2.new(0, 210, 0, 42)
@@ -507,7 +503,6 @@ end
 end)
 end
 
--- ================= CÁC TAB CHÍNH ================= --
 local TabPerf = CreateTab("Performance", "⚡", 1)
 local TabGfx = CreateTab("Graphics", "🎨", 2)
 local TabCam = CreateTab("View & Skins", "👁️", 3)
@@ -517,7 +512,6 @@ local TabFFlag = CreateTab("FFlags (Engine)", "⚙️", 6)
 local TabGod = CreateTab("God Tools", "⚔️", 7)
 local TabStats = CreateTab("Telemetry", "📊", 8)
 
--- ================= TAB 1: PERFORMANCE ================= --
 CreateSection(TabPerf, "Core Speed Controls")
 CreateToggle(TabPerf, "🧠 Smart Smoother (Bù Frame Ảo & Chống Giật)", false, function(state)
 State.SmartSmoother = state
@@ -560,7 +554,6 @@ end
 end
 end)
 
--- ================= TAB 2: GRAPHICS (FIXED SMOOTH PLASTIC) ================= --
 CreateSection(TabGfx, "Material & Texture Optimization")
 CreateToggle(TabGfx, "↳ Bỏ qua Model, 3D Mesh (Chỉ đổi Part thường)", true, function(state) State.Smooth_ExcludeMesh = state end)
 CreateToggle(TabGfx, "↳ Ép tất cả thành màu Xám (Grey-scale)", false, function(state) State.Smooth_GreyScale = state end)
@@ -570,7 +563,7 @@ CreateButton(TabGfx, "🧱 THỰC THI: Convert to Smooth Plastic", function()
 local count = 0
 local function process(item)
 if State.Smooth_ExcludeMesh and (item:IsA("MeshPart") or item:IsA("SpecialMesh") or item.Parent:IsA("Model") and not item.Parent:IsA("Workspace")) then
-return -- Bỏ qua Mesh và Model phức tạp nếu Tích
+return
 end
 if item:IsA("BasePart") then
 item.Material = Enum.Material.SmoothPlastic
@@ -601,7 +594,6 @@ CoreServices.Lighting.GlobalShadows = true
 end
 end)
 
--- ================= TAB 3: VIEW & SKINS & ESP ================= --
 CreateSection(TabCam, "Visibility & Character Settings")
 CreateToggle(TabCam, "👁️ ESP TỔNG HỢP (Dây nối + Highlight + Hitbox)", false, function(state)
 State.ESPToggle = state
@@ -630,7 +622,6 @@ Notify("Skins", "Stripped player accessories.")
 end
 end)
 
--- ================= TAB 4: HARDWARE BOOST ================= --
 CreateSection(TabBoost, "10 Pro Hardware Optimizers")
 CreateToggle(TabBoost, "1. 🌐 Smart Chunk Distance Loader", false, function(state) State.ChunkCulling = state end)
 CreateSlider(TabBoost, "   ↳ Culling Distance Studs", 100, 1000, 500, function(val) State.ViewDistanceStuds = val end)
@@ -693,7 +684,6 @@ collectgarbage("collect")
 Notify("Memory", "Garbage collection executed.")
 end)
 
--- ================= TAB 5: MOBILE PRO (Tối ưu siêu sâu) ================= --
 CreateSection(TabMobile, "Siêu Tối Ưu Cho Điện Thoại")
 CreateButton(TabMobile, "🚀 KÍCH HOẠT BOOST SIÊU CHUYÊN SÂU (ALL-IN-ONE)", function()
 State.MobileProMode = true
@@ -701,13 +691,12 @@ pcall(function()
 settings().Rendering.QualityLevel = 1
 settings().Network.IncomingReplicationLag = 0
 end)
--- Tắt toàn bộ bóng & Ánh sáng xám mượt
+
 CoreServices.Lighting.GlobalShadows = false
 CoreServices.Lighting.Brightness = 1
 CoreServices.Lighting.Ambient = Color3.fromRGB(150, 150, 150)
 CoreServices.Lighting.OutdoorAmbient = Color3.fromRGB(150, 150, 150)
 
--- Xóa toàn bộ rác hình ảnh và shader
 for _, v in pairs(CoreServices.Lighting:GetDescendants()) do
     if v:IsA("PostEffect") or v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("SunRaysEffect") then v:Destroy() end
 end
@@ -752,7 +741,6 @@ end)
 Notify("Animation", "Đã đóng băng mọi chuyển động!")
 end)
 
--- ================= TAB 6: FFLAG EMULATORS (CLIENT SETTINGS) ================= --
 CreateSection(TabFFlag, "Mô Phỏng FFlag Engine & Render API")
 CreateButton(TabFFlag, "💡 Force Voxel Lighting (Siêu Nhẹ)", function()
 pcall(function()
@@ -836,7 +824,6 @@ if cam then for _, v in pairs(cam:GetChildren()) do if v:IsA("PostEffect") then 
 Notify("FFlag Emulated", "Diệt gọn mọi hiệu ứng hình ảnh (PostFX).")
 end)
 
--- ================= TAB 7: GOD TOOLS ================= --
 CreateSection(TabGod, "Bộ 3 Công Cụ Quyền Năng")
 local DeletedPartsCache = {}
 local AddedPartsCache = {}
@@ -845,7 +832,6 @@ CreateButton(TabGod, "🎁 Nhận 3 Tool VIP (Vào Balo)", function()
 local bp = LocalPlayer:FindFirstChild("Backpack")
 if not bp then Notify("Error", "Không tìm thấy balo."); return end
 
--- 1. Tool Xóa
 local tDel = Instance.new("Tool"); tDel.Name = "🔥 Tool XÓA Block"; tDel.RequiresHandle = false; tDel.Parent = bp
 tDel.Activated:Connect(function()
     local mouse = LocalPlayer:GetMouse()
@@ -856,7 +842,6 @@ tDel.Activated:Connect(function()
     end
 end)
 
--- 2. Tool Thêm
 local tAdd = Instance.new("Tool"); tAdd.Name = "🧱 Tool THÊM Block"; tAdd.RequiresHandle = false; tAdd.Parent = bp
 tAdd.Activated:Connect(function()
     local mouse = LocalPlayer:GetMouse()
@@ -873,7 +858,6 @@ tAdd.Activated:Connect(function()
     end
 end)
 
--- 3. Tool Dịch Chuyển (TP)
 local tTP = Instance.new("Tool"); tTP.Name = "🚀 Tool DỊCH CHUYỂN"; tTP.RequiresHandle = false; tTP.Parent = bp
 tTP.Activated:Connect(function()
     local mouse = LocalPlayer:GetMouse()
@@ -904,7 +888,6 @@ Notify("Khôi Phục", "Trả lại " .. cDel .. " block xóa, xóa " .. cAdd ..
 
 end)
 
--- ================= TAB 8: TELEMETRY (REAL-TIME) ================= --
 CreateSection(TabStats, "Real-Time Telemetry (Nâng Cấp)")
 local function CreateStatCard(parent, title)
 local Label = Instance.new("TextLabel")
@@ -925,7 +908,6 @@ local PingLabel = CreateStatCard(TabStats, "  📡 PING & ĐỘ TRỄ: CALC...")
 local RAMLabel = CreateStatCard(TabStats, "  💾 MEMORY (RAM): CALC...")
 local SmoothLabel = CreateStatCard(TabStats, "  🧠 TRẠNG THÁI MƯỢT: Tốt")
 
--- BACKGROUND LOOPS & ESP LOGIC
 local Camera = CoreServices.Workspace.CurrentCamera
 local ESPScreen = Instance.new("ScreenGui")
 ESPScreen.Name = "NexusESP_UI"
@@ -972,7 +954,6 @@ end
 end
 CoreServices.Players.PlayerRemoving:Connect(RemoveESP)
 
--- Vòng lặp Xóa VFX Từ từ (Batching)
 task.spawn(function()
 while task.wait(5) do
 if State.AutoVFXDelete then
@@ -986,13 +967,12 @@ end
 end)
 for i, vfx in ipairs(vfxQueue) do
 pcall(function() vfx:Destroy() end)
-if i % 15 == 0 then task.wait() end -- Cứ 15 cái nghỉ 1 frame để không lag
+if i % 15 == 0 then task.wait() end
 end
 end
 end
 end)
 
--- Vòng lặp Chunk Culling & Light Limiter
 task.spawn(function()
 while task.wait(1) do
 local rootPos = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character.HumanoidRootPart.Position
@@ -1020,9 +1000,7 @@ end
 end
 end)
 
--- ESP & Smart Smoother (RenderStepped & Heartbeat)
 CoreServices.RunService.RenderStepped:Connect(function(deltaTime)
--- Lõi ESP Mượt mà
 if State.ESPToggle then
 for _, player in pairs(CoreServices.Players:GetPlayers()) do
 if player ~= LocalPlayer then
